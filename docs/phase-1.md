@@ -1,5 +1,16 @@
 # Phase 0 + Phase 1 — Scaffolding and configuration resolution
 
+**Status:** phase 0 complete (`187dc2e`). Phase 1 complete.
+
+**Phase 1 deviations, recorded:** the build order assumes a duration module that the file layout
+does not list, so `src/benchdiff/duration.py` exists on its own (step 4 would otherwise depend on
+step 6). A relative `--manifest` is resolved against the invocation directory, like every other CLI
+path; only the *default* comes from `--path`. The `json_path` extractor names phase 3, the extraction
+phase, although that phase builds regex extraction only. `validate` returns a `ManifestData`
+intermediate whose optional scalars stay `None`, which is what makes "validate first, then merge"
+literal; the plan's sketch had no such type. Model invariants raise `ValueError` as a backstop for
+programmatic construction, while user-facing messages come from `validate` with key paths.
+
 **Goal:** by the end of phase 1, `benchdiff resolve` reads a real `benchdiff.toml` plus CLI flags and
 prints the exact run plan it *would* execute. Nothing is benchmarked, nothing is cloned, no process
 is spawned.
@@ -13,20 +24,27 @@ wrong in seven places. And this is the cheapest point in the project to get a fa
 
 Mechanical. No design decisions.
 
-- [ ] `git init`, first commit
-- [ ] `.gitignore` (Python + `.benchdiff/` + `*.egg-info`)
-- [ ] `pyproject.toml` — package `benchdiff`, script entry point `benchdiff`, requires-python `>=3.11`
-- [ ] `uv` for environments and commands (or plain `venv` + `pip` if preferred — pick one, write it in the README)
-- [ ] `ruff` configured (lint + format), `pytest` configured with `testpaths`
-- [ ] `src/benchdiff/__init__.py` with `__version__`
-- [ ] `src/benchdiff/cli.py` — stub: `--version` and `--help` only
-- [ ] `tests/test_cli.py` — one real test (`--version` exits 0 and prints the version)
-- [ ] `README.md` — one paragraph, install + usage stub, link to `docs/vision.md`
-- [ ] GitHub Actions: lint + test on push and PR
-- [ ] commit
+- [x] `git init`, first commit
+- [x] `.gitignore` (Python + `.benchdiff/` + `*.egg-info`)
+- [x] `pyproject.toml` — package `benchdiff`, script entry point `benchdiff`, requires-python `>=3.12`
+- [x] `uv` for environments and commands (or plain `venv` + `pip` if preferred — pick one, write it in the README)
+- [x] `ruff` configured (lint + format), `pytest` configured with `testpaths`
+- [x] `src/benchdiff/__init__.py` with `__version__`
+- [x] `src/benchdiff/cli.py` — stub: `--version` and `--help` only
+- [x] `tests/test_cli.py` — one real test (`--version` exits 0 and prints the version)
+- [x] `README.md` — one paragraph, install + usage stub, link to `docs/vision.md`
+- [x] GitHub Actions: lint + test on push and PR
+- [x] commit
 
 **Done when:** `uv run pytest` passes, `uv run ruff check` is clean, `uv run benchdiff --version` works,
 CI is green.
+
+**Done in `187dc2e`**, with three deviations worth knowing:
+
+- Python floor is **3.12**, pinned via `.python-version`; CI tests 3.12 *and* 3.15 on all three OSes.
+- `docs/` is **excluded from ruff** — ruff 0.17 formats Python inside Markdown and mangles the
+  aligned snippets in these plans. Prose stays hand-formatted.
+- CI triggers on `push` to `master` only, plus `pull_request`, so PR branches don't run twice.
 
 ---
 

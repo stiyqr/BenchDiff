@@ -1,0 +1,17 @@
+[project]
+name = "two-metrics"
+
+[bench]
+command = "bench --report"
+
+[[bench.metrics]]
+name = "latency"
+unit = "ns/op"
+direction = "lower_is_better"
+extract = { regex = '^bench\s+took\s+([\d.]+)\s+ns' }
+
+[[bench.metrics]]
+name = "throughput"
+unit = "rps"
+direction = "higher_is_better"
+extract = { regex = '^bench\s+did\s+([\d.]+)\s+req/s' }

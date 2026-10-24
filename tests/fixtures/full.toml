@@ -1,0 +1,24 @@
+[project]
+name = "banking-core"
+language = "go"
+mode = "optimize"
+
+[bench]
+command = "go test -bench=. -benchmem -count=1 ./internal/billing/..."
+samples = 20
+warmup = 2
+timeout = "5m"
+overlay = ["./bench/", "scripts/seed_test_db.sql"]
+
+[[bench.metrics]]
+name = "latency"
+label = "execution latency"
+unit = "ns/op"
+direction = "lower_is_better"
+extract = { regex = '^\S+\s+\d+\s+([\d.]+) ns/op' }
+
+[[bench.metrics]]
+name = "allocs"
+unit = "B/op"
+direction = "lower_is_better"
+extract = { regex = '^\S+\s+\d+\s+[\d.]+ ns/op\s+(\d+) B/op' }

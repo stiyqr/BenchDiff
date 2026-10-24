@@ -1,0 +1,11 @@
+[project]
+name = "tiny"
+
+[bench]
+command = "python bench.py"
+
+[[bench.metrics]]
+name = "latency"
+unit = "ns/op"
+direction = "lower_is_better"
+extract = { regex = '^\S+\s+\d+\s+([\d.]+) ns/op' }
